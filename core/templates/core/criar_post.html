@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Post</title>
+</head>
+<body>
+    <h1>Criar novo Post</h1>
+
+    <form method="post">
+
+        {% csrf_token %}
+        {% if form.errors%}
+            <ul>
+                {%for field in form %}
+                    {% for error in field.errors %}
+                        <li style="color:red">{{error}}</li>
+                    {%endfor %}
+                {%endfor %}
+            </ul>
+        {% endif %}
+        {{ form.as_p }}
+        <button type="submit">Publicar</button>
+    </form>
+    
+    <a href="{% url 'home' %}">Voltar para Home</a>
+</body>
+</html>
