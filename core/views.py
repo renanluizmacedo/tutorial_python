@@ -4,18 +4,25 @@ from core.models import Post
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm
 from django.contrib import messages
+from django.core.paginator import Paginator
+
 # Create your views here.
 def home(request):
-    post = Post.objects.all()
-    print(post)
-    return render(request,'core/home.html',{'posts':post})
+    posts_list = Post.objects.all().order_by('criado_em')
+    paginator = Paginator(posts_list,5)
+
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+    return render(request,'core/home.html',{'posts':posts})
 
 @login_required(login_url='login')
 def criar_post(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.autor = request.user
+            post.save()
             messages.success(request,'Post criado com sucesso!')
             return redirect('home')
     else:

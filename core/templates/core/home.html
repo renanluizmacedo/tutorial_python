@@ -1,36 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutorial Django</title>
-</head>
-<body>
-    <h1>Bem-vindo à página inicial!</h1>
-    <p>{{ request.user }}</p>
-    <form method="post" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit">Sair</button>
-    </form>
-    <a href="{% url 'criar_post' %}">Criar novo post</a>
-    {% for post in posts %}
-        <h2>{{ post.titulo }}</h2>
-        <p>{{ post.conteudo }}</p>
+{%extends 'core/base.html'%}
+{%block title%}Home {%endblock%}
 
-        {%if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li style="color:green">{{message}}</li>
-                {%endfor%}
-                
-            </ul>
-        {%endif%}
-        <a href="{% url 'editar_post' post.id %}">Editar</a>
-        <form action="{%url 'deletar_post' post.id %}" method="post" style="display:inline">
-            {% csrf_token %}
-            <button type="submit">Deletar</button>
-        </form>
+{%block content%}
+<h1>posts</h1>
+{%for post in posts%}
+    <h2>{{post.titulo}}</h2>
+    <p>{{post.conteudo}}</p>
 
-    {% endfor %}
-</body>
-</html>
+    {% if post.imagem %}
+    <img src="{{post.imagem.url}}" width="300">
+    {% endif %}
+{%empty%}
+    <p>Nenhum post encontrado</p>
+{%endfor%}
+<hr>
+<div>
+    {% if posts.has_previous %}
+        <a href="?page={{ posts.previous_page_number }}">← Anterior</a>
+    {% endif %}
+
+    <span>
+        Página {{ posts.number }} de {{ posts.paginator.num_pages }}
+    </span>
+
+    {% if posts.has_next %}
+        <a href="?page={{ posts.next_page_number }}">Próxima →</a>
+    {% endif %}
+</div>
+{%endblock %}
