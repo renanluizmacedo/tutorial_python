@@ -7,6 +7,11 @@
 </head>
 <body>
     <h1>Bem-vindo à página inicial!</h1>
+    <p>{{ request.user }}</p>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Sair</button>
+    </form>
     <a href="{% url 'criar_post' %}">Criar novo post</a>
     {% for post in posts %}
         <h2>{{ post.titulo }}</h2>
